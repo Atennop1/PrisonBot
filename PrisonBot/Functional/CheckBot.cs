@@ -1,4 +1,4 @@
-﻿using System.Text;
+﻿using System.Data;
 using PrisonBot.Loop;
 using PrisonBot.Telegram;
 using PrisonBot.Tools;
@@ -24,22 +24,33 @@ namespace PrisonBot.Functional
         {
             if (!CanGetUpdate(updateInfo))
                 throw new InvalidOperationException("Can't get update");
-            
-            var dataTable = _database.SendReadingRequest("SELECT * FROM passports");
-            var finalMessageStringBuilder = new StringBuilder();
-            finalMessageStringBuilder.Append("ПАСПОРТА МКС:\n\n");
 
-            for (var i = 0; i < dataTable.Rows.Count; i++)
+            var arguments = updateInfo.Message!.Text!.GetCommandArguments();
+            DataTable dataTable;
+            
+            if (arguments.Length == 0)
             {
-                finalMessageStringBuilder.Append($"ИМЯ: {((string)dataTable.Rows[i]["name"]).ToUpper()}\n" +
-                                                 $"СКОКО ЛЕТ В ЗОНЕ: {((int)dataTable.Rows[i]["how_many_years"]).ToString().ToUpper()}\n" +
-                                                 $"СТАТУС: {((string)dataTable.Rows[i]["status"]).ToUpper()}\n\n");
+                var userId = updateInfo.Message.ReplyToMessage == null ? updateInfo.Message!.From!.Id : updateInfo.Message!.ReplyToMessage!.From!.Id;
+                dataTable = _database.SendReadingRequest($"SELECT * FROM passports WHERE id = {userId}");
             }
-                        
-            _telegram.SendMessage(finalMessageStringBuilder.ToString(), updateInfo.Message!.Chat.Id);
+            else
+            {
+                var userName = string.Join(' ', arguments);
+                dataTable = _database.SendReadingRequest(long.TryParse(userName, out long userId) 
+                    ? $"SELECT * FROM passports WHERE id = {userId}" 
+                    : $"SELECT * FROM passports WHERE name = '{userName}'");
+            }
+
+            var message = dataTable.Rows.Count == 0 
+                ? "НЕ НАШЕЛ ТАКОГО ЧЕБУРЕКА" 
+                : $"ИМЯ: {((string)dataTable.Rows[0]["name"]).ToUpper()}\n" +
+                  $"СКОКО ЛЕТ В ЗОНЕ: {((int)dataTable.Rows[0]["how_many_years"]).ToString().ToUpper()}\n" +
+                  $"СТАТУС: {((string)dataTable.Rows[0]["status"]).ToUpper()}";
+
+            _telegram.SendMessage(message, updateInfo.Message!.Chat.Id, replyToMessageId: updateInfo.Message!.MessageId);
         }
 
-        public bool CanGetUpdate(IUpdateInfo updateInfo)
-            => updateInfo.Message!.Text!.IsCommand("/check");
+        public bool CanGetUpdate(IUpdateInfo updateInfo) 
+            => updateInfo.Message!.Text != null && updateInfo.Message!.Text!.IsCommand("/check");
     }
 }

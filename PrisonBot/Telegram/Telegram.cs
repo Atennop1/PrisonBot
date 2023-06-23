@@ -11,12 +11,13 @@ namespace PrisonBot.Telegram
         public Telegram(BotClient client) 
             => _client = client ?? throw new ArgumentNullException(nameof(client));
 
-        public void SendMessage(string text, long id, ReplyMarkup replyMarkup = null!)
+        public void SendMessage(string text, long id, ReplyMarkup replyMarkup = null!, long? replyToMessageId = null!)
         {
             if (text == null)
                 throw new ArgumentNullException(nameof(text));
 
-            _client.SendMessage(text: text, chatId: id, replyMarkup: replyMarkup);
+            try { _client.SendMessage(text: text, chatId: id, replyMarkup: replyMarkup, replyToMessageId: (int?)replyToMessageId); }
+            catch { /* ignored */ }
         }
     }
 }
