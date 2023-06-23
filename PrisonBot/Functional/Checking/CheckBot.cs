@@ -10,6 +10,7 @@ namespace PrisonBot.Functional
     {
         private readonly IDatabase _database;
         private readonly ITelegram _telegram;
+        private readonly InformationStringFactory _informationStringFactory = new();
 
         public CheckBot(IDatabase database, ITelegram telegram)
         {
@@ -41,12 +42,7 @@ namespace PrisonBot.Functional
                     : $"SELECT * FROM passports WHERE name = '{userName}'");
             }
 
-            var message = dataTable.Rows.Count == 0 
-                ? "НЕ НАШЕЛ ТАКОГО ЧЕБУРЕКА" 
-                : $"ИМЯ: {((string)dataTable.Rows[0]["name"]).ToUpper()}\n" +
-                  $"СКОКО ЛЕТ В ЗОНЕ: {((int)dataTable.Rows[0]["how_many_years"]).ToString().ToUpper()}\n" +
-                  $"СТАТУС: {((string)dataTable.Rows[0]["status"]).ToUpper()}";
-
+            var message = dataTable.Rows.Count == 0 ? "НЕ НАШЕЛ ТАКОГО ЧЕБУРЕКА" : _informationStringFactory.GetFor(dataTable);
             _telegram.SendMessage(message, updateInfo.Message!.Chat.Id, replyToMessageId: updateInfo.Message!.MessageId);
         }
 
