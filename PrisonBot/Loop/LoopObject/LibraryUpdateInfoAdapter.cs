@@ -25,7 +25,7 @@ namespace PrisonBot.Loop
                 {
                     UpdateType.Message => TypeOfUpdate.Message,
                     UpdateType.CallbackQuery => TypeOfUpdate.ButtonCallback,
-                    _ => throw new InvalidOperationException()
+                    _ => (TypeOfUpdate)(-1)
                 };
             }
         }

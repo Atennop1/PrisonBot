@@ -36,10 +36,10 @@ namespace PrisonBot.Functional
             }
             else
             {
-                var userName = string.Join(' ', arguments);
-                dataTable = _database.SendReadingRequest(long.TryParse(userName, out long userId) 
+                var nickName = string.Join(' ', arguments);
+                dataTable = _database.SendReadingRequest(long.TryParse(nickName, out long userId) 
                     ? $"SELECT * FROM passports WHERE id = {userId}" 
-                    : $"SELECT * FROM passports WHERE name = '{userName}'");
+                    : $"SELECT * FROM passports WHERE UPPER(nickname) = UPPER('{nickName}')");
             }
 
             var message = dataTable.Rows.Count == 0 ? "НЕ НАШЕЛ ТАКОГО ЧЕБУРЕКА" : _informationStringFactory.GetFor(dataTable);

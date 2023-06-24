@@ -9,7 +9,7 @@ namespace PrisonBot.Functional
             return $"ИМЯ: {((string)table.Rows[0]["name"]).ToUpper()}\n" +
                    $"КЛИКУХА: {((string)table.Rows[0]["nickname"]).ToUpper()}\n" +
                    $"СКОКО ЛЕТ В ЗОНЕ: {((int)table.Rows[0]["years_in_prison"]).ToString().ToUpper()}\n" + 
-                   $"СОЦИАЛЬНЫЙ РЕЙТИНГ: {((int)table.Rows[0]["social_credit"]).ToString().ToUpper()}\n" +
+                   $"СОЦИАЛЬНЫЙ РЕЙТИНГ: {((int)table.Rows[0]["social_credit"]).ToString().ToUpper()}%\n" +
                    $"НАПРАВЛЕННОСТЬ: {((string)table.Rows[0]["specialization"]).ToUpper()}\n" +
                    $"УРОВЕНЬ НАПРАВЛЕННОСТИ: {((string)table.Rows[0]["specialization_level"]).ToUpper()}\n" +
                    $"СТАТУС: {GetStatus((int)table.Rows[0]["status_id"]).ToUpper()}\n" + 
