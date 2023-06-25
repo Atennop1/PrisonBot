@@ -21,32 +21,46 @@ namespace PrisonBot.Functional
         public TypeOfUpdate RequiredTypeOfUpdate 
             => TypeOfUpdate.Message;
         
+        public bool CanGetUpdate(IUpdateInfo updateInfo) 
+            => updateInfo.Message!.Text != null && updateInfo.Message!.Text!.IsCommand("/check");
+        
         public void GetUpdate(IUpdateInfo updateInfo)
         {
             if (!CanGetUpdate(updateInfo))
                 throw new InvalidOperationException("Can't get update");
 
             var arguments = updateInfo.Message!.Text!.GetCommandArguments();
-            DataTable dataTable;
-            
-            if (arguments.Length == 0)
-            {
-                var userId = updateInfo.Message.ReplyToMessage == null ? updateInfo.Message!.From!.Id : updateInfo.Message!.ReplyToMessage!.From!.Id;
-                dataTable = _database.SendReadingRequest($"SELECT * FROM passports WHERE id = {userId}");
-            }
-            else
-            {
-                var nickName = string.Join(' ', arguments);
-                dataTable = _database.SendReadingRequest(long.TryParse(nickName, out long userId) 
-                    ? $"SELECT * FROM passports WHERE id = {userId}" 
-                    : $"SELECT * FROM passports WHERE UPPER(nickname) = UPPER('{nickName}')");
-            }
+            var dataTable = arguments.Length == 0 ? GetTableWhenZeroArguments(updateInfo) : GetTableWhenNonZeroArguments(arguments);
 
-            var message = dataTable.Rows.Count == 0 ? "НЕ НАШЕЛ ТАКОГО ЧЕБУРЕКА" : _informationStringFactory.GetFor(dataTable);
+            var message = dataTable.Rows.Count == 0 ? "НЕ НАШЕЛ ТАКОГО ЧЕЛИКА" : _informationStringFactory.GetFor(dataTable);
             _telegram.SendMessage(message, updateInfo.Message!.Chat.Id, replyToMessageId: updateInfo.Message!.MessageId);
         }
 
-        public bool CanGetUpdate(IUpdateInfo updateInfo) 
-            => updateInfo.Message!.Text != null && updateInfo.Message!.Text!.IsCommand("/check");
+        private DataTable GetTableWhenNonZeroArguments(string[] arguments)
+        {
+            DataTable dataTable;
+            var nickname = string.Join(' ', arguments);
+
+            if (long.TryParse(nickname, out long userId))
+            {
+                dataTable = _database.SendReadingRequest($"SELECT * FROM passports_info WHERE user_id = {userId}");
+                dataTable.Merge(_database.SendReadingRequest($"SELECT * FROM users_statuses WHERE user_id = {userId}"));
+            }
+            else
+            {
+                dataTable = _database.SendReadingRequest($"SELECT * FROM passports_info WHERE UPPER(nickname) = UPPER('{nickname}')");
+                dataTable.Merge(_database.SendReadingRequest($"SELECT * FROM users_statuses WHERE user_id = {dataTable.Rows[0]["user_id"]}"));
+            }
+
+            return dataTable;
+        }
+
+        private DataTable GetTableWhenZeroArguments(IUpdateInfo updateInfo)
+        {
+            var userId = updateInfo.Message!.ReplyToMessage == null ? updateInfo.Message!.From!.Id : updateInfo.Message!.ReplyToMessage!.From!.Id;
+            var dataTable = _database.SendReadingRequest($"SELECT * FROM passports_decorative_info WHERE user_id = {userId}");
+            dataTable.Merge(_database.SendReadingRequest($"SELECT * FROM users_statuses WHERE user_id = {userId}"));
+            return dataTable;
+        }
     }
 }
