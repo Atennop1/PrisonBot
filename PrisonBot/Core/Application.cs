@@ -16,7 +16,7 @@ namespace PrisonBot.Core
 
             var loopObjects = new List<ILoopObject>
             {
-                new CheckBot(database, telegram)
+                new ShowPassportBot(database, telegram)
             };
 
             var updatingCycle = new UpdatingLoop(client, loopObjects);

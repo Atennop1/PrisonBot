@@ -6,13 +6,13 @@ using RelationalDatabasesViaOOP;
 
 namespace PrisonBot.Functional
 {
-    public sealed class CheckBot : ILoopObject
+    public sealed class ShowPassportBot : ILoopObject
     {
         private readonly IDatabase _database;
         private readonly ITelegram _telegram;
         private readonly InformationStringFactory _informationStringFactory = new();
 
-        public CheckBot(IDatabase database, ITelegram telegram)
+        public ShowPassportBot(IDatabase database, ITelegram telegram)
         {
             _database = database ?? throw new ArgumentNullException(nameof(database));
             _telegram = telegram ?? throw new ArgumentNullException(nameof(telegram));
@@ -22,7 +22,7 @@ namespace PrisonBot.Functional
             => TypeOfUpdate.Message;
         
         public bool CanGetUpdate(IUpdateInfo updateInfo) 
-            => updateInfo.Message!.Text != null && updateInfo.Message!.Text!.IsCommand("/check");
+            => updateInfo.Message!.Text != null && updateInfo.Message!.Text!.IsCommand("/showPassport");
         
         public void GetUpdate(IUpdateInfo updateInfo)
         {
@@ -32,7 +32,7 @@ namespace PrisonBot.Functional
             var arguments = updateInfo.Message!.Text!.GetCommandArguments();
             var dataTable = arguments.Length == 0 ? GetTableWhenZeroArguments(updateInfo) : GetTableWhenNonZeroArguments(arguments);
 
-            var message = dataTable.Rows.Count == 0 ? "НЕ НАШЕЛ ТАКОГО ЧЕЛИКА" : _informationStringFactory.GetFor(dataTable);
+            var message = dataTable.Rows.Count == 0 ? "НЕ НАШЕЛ ПАСПОРТ ЭТОГО ЧЕЛИКА" : _informationStringFactory.GetFor(dataTable);
             _telegram.SendMessage(message, updateInfo.Message!.Chat.Id, replyToMessageId: updateInfo.Message!.MessageId);
         }
 
