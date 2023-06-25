@@ -32,7 +32,6 @@ namespace PrisonBot.Functional
             var arguments = updateInfo.Message!.Text!.GetCommandArguments();
             var dataTable = arguments.Length == 0 ? GetTableWhenZeroArguments(updateInfo) : GetTableWhenNonZeroArguments(arguments);
 
-            Console.WriteLine(dataTable.Rows[0]["status_id"]);
             var message = dataTable.Rows.Count == 0 ? "НЕ НАШЕЛ ПАСПОРТ ЭТОГО ЧЕЛИКА" : _informationStringFactory.GetFor(dataTable);
             _telegram.SendMessage(message, updateInfo.Message!.Chat.Id, replyToMessageId: updateInfo.Message!.MessageId);
         }
@@ -45,12 +44,14 @@ namespace PrisonBot.Functional
             if (long.TryParse(nickname, out long userId))
             {
                 dataTable = _database.SendReadingRequest($"SELECT * FROM passports_info WHERE user_id = {userId}");
-                dataTable.Merge(_database.SendReadingRequest($"SELECT status_id FROM users_statuses WHERE user_id = {userId}"));
+                var tables = new List<DataTable> {dataTable, _database.SendReadingRequest($"SELECT * FROM users_statuses WHERE user_id = {userId}") };
+                dataTable = tables.RightMerge("user_id");
             }
             else
             {
                 dataTable = _database.SendReadingRequest($"SELECT * FROM passports_info WHERE UPPER(nickname) = UPPER('{nickname}')");
-                dataTable.Merge(_database.SendReadingRequest($"SELECT status_id FROM users_statuses WHERE user_id = {dataTable.Rows[0]["user_id"]}"));
+                var tables = new List<DataTable> {dataTable, _database.SendReadingRequest($"SELECT * FROM users_statuses WHERE user_id = {dataTable.Rows[0]["user_id"]}") };
+                dataTable = tables.RightMerge("user_id");
             }
 
             return dataTable;
@@ -60,7 +61,9 @@ namespace PrisonBot.Functional
         {
             var userId = updateInfo.Message!.ReplyToMessage == null ? updateInfo.Message!.From!.Id : updateInfo.Message!.ReplyToMessage!.From!.Id;
             var dataTable = _database.SendReadingRequest($"SELECT * FROM passports_info WHERE user_id = {userId}");
-            dataTable.Merge(_database.SendReadingRequest($"SELECT status_id FROM users_statuses WHERE user_id = {userId}"));
+            
+            var tables = new List<DataTable> {dataTable, _database.SendReadingRequest($"SELECT * FROM users_statuses WHERE user_id = {userId}") };
+            dataTable = tables.RightMerge("user_id");
             return dataTable;
         }
     }

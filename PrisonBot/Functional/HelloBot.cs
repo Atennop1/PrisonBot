@@ -23,7 +23,7 @@ namespace PrisonBot.Functional
                           "Я - БОТ, В КОТОРОМ МОЖНО ПОЧУВСТВОВАТЬ СЕБЯ КАК НА ЗОНЕ!\n" +
                           "ТЫ МОЖЕШЬ СМОТРЕТЬ ПАСПОРТА ЗАКЛЮЧЕННЫХ И В СКОРОМ ВРЕМЕНИ ПРОКАЧИВАТЬ СВОЙ СТАТУС ИЛИ ОПУСКАТЬ ЛОХОВ!";
             
-            _telegram.SendMessage(message, updateInfo.Message!.From!.Id, replyToMessageId: updateInfo.Message.MessageId);
+            _telegram.SendMessage(message, updateInfo.Message!.Chat!.Id, replyToMessageId: updateInfo.Message.MessageId);
         }
 
         public bool CanGetUpdate(IUpdateInfo updateInfo)

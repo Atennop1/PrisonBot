@@ -22,7 +22,6 @@ namespace PrisonBot.Core
 
             var updatingCycle = new UpdatingLoop(client, loopObjects);
             updatingCycle.Activate();
-
         }
     }
 }
