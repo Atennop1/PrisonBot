@@ -22,7 +22,7 @@ namespace PrisonBot.Functional
             => TypeOfUpdate.Message;
         
         public bool CanGetUpdate(IUpdateInfo updateInfo) 
-            => updateInfo.Message!.Text != null && updateInfo.Message!.Text!.IsCommand("/showPassport");
+            => updateInfo.Message!.Text != null && updateInfo.Message!.Text!.IsCommand("/passport");
         
         public void GetUpdate(IUpdateInfo updateInfo)
         {
@@ -32,6 +32,7 @@ namespace PrisonBot.Functional
             var arguments = updateInfo.Message!.Text!.GetCommandArguments();
             var dataTable = arguments.Length == 0 ? GetTableWhenZeroArguments(updateInfo) : GetTableWhenNonZeroArguments(arguments);
 
+            Console.WriteLine(dataTable.Rows[0]["status_id"]);
             var message = dataTable.Rows.Count == 0 ? "НЕ НАШЕЛ ПАСПОРТ ЭТОГО ЧЕЛИКА" : _informationStringFactory.GetFor(dataTable);
             _telegram.SendMessage(message, updateInfo.Message!.Chat.Id, replyToMessageId: updateInfo.Message!.MessageId);
         }
@@ -44,12 +45,12 @@ namespace PrisonBot.Functional
             if (long.TryParse(nickname, out long userId))
             {
                 dataTable = _database.SendReadingRequest($"SELECT * FROM passports_info WHERE user_id = {userId}");
-                dataTable.Merge(_database.SendReadingRequest($"SELECT * FROM users_statuses WHERE user_id = {userId}"));
+                dataTable.Merge(_database.SendReadingRequest($"SELECT status_id FROM users_statuses WHERE user_id = {userId}"));
             }
             else
             {
                 dataTable = _database.SendReadingRequest($"SELECT * FROM passports_info WHERE UPPER(nickname) = UPPER('{nickname}')");
-                dataTable.Merge(_database.SendReadingRequest($"SELECT * FROM users_statuses WHERE user_id = {dataTable.Rows[0]["user_id"]}"));
+                dataTable.Merge(_database.SendReadingRequest($"SELECT status_id FROM users_statuses WHERE user_id = {dataTable.Rows[0]["user_id"]}"));
             }
 
             return dataTable;
@@ -58,8 +59,8 @@ namespace PrisonBot.Functional
         private DataTable GetTableWhenZeroArguments(IUpdateInfo updateInfo)
         {
             var userId = updateInfo.Message!.ReplyToMessage == null ? updateInfo.Message!.From!.Id : updateInfo.Message!.ReplyToMessage!.From!.Id;
-            var dataTable = _database.SendReadingRequest($"SELECT * FROM passports_decorative_info WHERE user_id = {userId}");
-            dataTable.Merge(_database.SendReadingRequest($"SELECT * FROM users_statuses WHERE user_id = {userId}"));
+            var dataTable = _database.SendReadingRequest($"SELECT * FROM passports_info WHERE user_id = {userId}");
+            dataTable.Merge(_database.SendReadingRequest($"SELECT status_id FROM users_statuses WHERE user_id = {userId}"));
             return dataTable;
         }
     }

@@ -16,6 +16,7 @@ namespace PrisonBot.Core
 
             var loopObjects = new List<ILoopObject>
             {
+                new HelloBot(telegram),
                 new ShowPassportBot(database, telegram)
             };
 
