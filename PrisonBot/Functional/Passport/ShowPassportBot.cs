@@ -20,10 +20,10 @@ namespace PrisonBot.Functional
 
         public TypeOfUpdate RequiredTypeOfUpdate 
             => TypeOfUpdate.Message;
-        
+
         public bool CanGetUpdate(IUpdateInfo updateInfo) 
             => updateInfo.Message!.Text != null && updateInfo.Message!.Text!.IsCommand("/passport");
-        
+
         public void GetUpdate(IUpdateInfo updateInfo)
         {
             if (!CanGetUpdate(updateInfo))
@@ -44,13 +44,19 @@ namespace PrisonBot.Functional
             if (long.TryParse(nickname, out long userId))
             {
                 dataTable = _database.SendReadingRequest($"SELECT * FROM passports_info WHERE user_id = {userId}");
-                var tables = new List<DataTable> {dataTable, _database.SendReadingRequest($"SELECT * FROM users_statuses WHERE user_id = {userId}") };
+                if (dataTable.Rows.Count == 0)
+                    return dataTable;
+                
+                var tables = new List<DataTable> { dataTable, _database.SendReadingRequest($"SELECT * FROM users_statuses WHERE user_id = {userId}") };
                 dataTable = tables.RightMerge("user_id");
             }
             else
             {
                 dataTable = _database.SendReadingRequest($"SELECT * FROM passports_info WHERE UPPER(nickname) = UPPER('{nickname}')");
-                var tables = new List<DataTable> {dataTable, _database.SendReadingRequest($"SELECT * FROM users_statuses WHERE user_id = {dataTable.Rows[0]["user_id"]}") };
+                if (dataTable.Rows.Count == 0)
+                    return dataTable;
+                
+                var tables = new List<DataTable> { dataTable, _database.SendReadingRequest($"SELECT * FROM users_statuses WHERE user_id = {dataTable.Rows[0]["user_id"]}") };
                 dataTable = tables.RightMerge("user_id");
             }
 

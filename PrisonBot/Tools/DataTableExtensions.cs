@@ -8,6 +8,8 @@ namespace PrisonBot.Tools
         {
             if (!tables.Any())
                 throw new ArgumentException("Tables must not be empty", nameof(tables));
+
+            tables = tables.Where(table => table.Rows.Count != 0).ToList();
             
             if (primaryKeyColumn != null && tables.Any(table => !table.Columns.Contains(primaryKeyColumn)))
                 throw new ArgumentException("All tables must have the specified primary key column " + primaryKeyColumn, nameof(primaryKeyColumn));
