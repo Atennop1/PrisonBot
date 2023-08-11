@@ -1,0 +1,7 @@
+C:\Users\User\source\repos\PrisonBot\PrisonBot\obj\Debug\net472\PrisonBot.csproj.AssemblyReference.cache
+C:\Users\User\source\repos\PrisonBot\PrisonBot\obj\Debug\net472\PrisonBot.csproj.SuggestedBindingRedirects.cache
+C:\Users\User\source\repos\PrisonBot\PrisonBot\obj\Debug\net472\PrisonBot.exe.config
+C:\Users\User\source\repos\PrisonBot\PrisonBot\obj\Debug\net472\PrisonBot.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\User\source\repos\PrisonBot\PrisonBot\obj\Debug\net472\PrisonBot.AssemblyInfoInputs.cache
+C:\Users\User\source\repos\PrisonBot\PrisonBot\obj\Debug\net472\PrisonBot.AssemblyInfo.cs
+C:\Users\User\source\repos\PrisonBot\PrisonBot\obj\Debug\net472\PrisonBot.csproj.CoreCompileInputs.cache

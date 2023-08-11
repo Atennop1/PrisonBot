@@ -21,7 +21,7 @@ namespace PrisonBot.Functional
 
             var message = "ПРИВЕТ!\n" +
                           "Я - БОТ, В КОТОРОМ МОЖНО ПОЧУВСТВОВАТЬ СЕБЯ КАК НА ЗОНЕ!\n" +
-                          "ТЫ МОЖЕШЬ СМОТРЕТЬ ПАСПОРТА ЗАКЛЮЧЕННЫХ И В СКОРОМ ВРЕМЕНИ ПРОКАЧИВАТЬ СВОЙ СТАТУС ИЛИ ОПУСКАТЬ ЛОХОВ!";
+                          "ТЫ МОЖЕШЬ СМОТРЕТЬ ПАСПОРТА ЗАКЛЮЧЕННЫХ!";
             
             _telegram.SendMessage(message, updateInfo.Message!.Chat.Id, replyToMessageId: updateInfo.Message.MessageId);
         }

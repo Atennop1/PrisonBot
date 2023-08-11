@@ -43,21 +43,21 @@ namespace PrisonBot.Functional
 
             if (long.TryParse(nickname, out long userId))
             {
-                dataTable = _database.SendReadingRequest($"SELECT * FROM passports_info WHERE user_id = {userId}");
+                dataTable = _database.SendReadingRequest($"SELECT * FROM passports WHERE ids LIKE '%{userId}%'");
                 if (dataTable.Rows.Count == 0)
                     return dataTable;
                 
-                var tables = new List<DataTable> { dataTable, _database.SendReadingRequest($"SELECT * FROM users_statuses WHERE user_id = {userId}") };
-                dataTable = tables.RightMerge("user_id");
+                var tables = new List<DataTable> { dataTable, _database.SendReadingRequest($"SELECT * FROM statuses WHERE ids LIKE '%{userId}%'") };
+                dataTable = tables.RightMerge("ids");
             }
             else
             {
-                dataTable = _database.SendReadingRequest($"SELECT * FROM passports_info WHERE UPPER(nickname) = UPPER('{nickname}')");
+                dataTable = _database.SendReadingRequest($"SELECT * FROM passports WHERE UPPER(nickname) = UPPER('{nickname}')");
                 if (dataTable.Rows.Count == 0)
                     return dataTable;
                 
-                var tables = new List<DataTable> { dataTable, _database.SendReadingRequest($"SELECT * FROM users_statuses WHERE user_id = {dataTable.Rows[0]["user_id"]}") };
-                dataTable = tables.RightMerge("user_id");
+                var tables = new List<DataTable> { dataTable, _database.SendReadingRequest($"SELECT * FROM statuses WHERE ids LIKE '%{dataTable.Rows[0]["ids"]}%'") };
+                dataTable = tables.RightMerge("ids");
             }
 
             return dataTable;
@@ -66,10 +66,10 @@ namespace PrisonBot.Functional
         private DataTable GetTableWhenZeroArguments(IUpdateInfo updateInfo)
         {
             var userId = updateInfo.Message!.ReplyToMessage == null ? updateInfo.Message!.From!.Id : updateInfo.Message!.ReplyToMessage!.From!.Id;
-            var dataTable = _database.SendReadingRequest($"SELECT * FROM passports_info WHERE user_id = {userId}");
+            var dataTable = _database.SendReadingRequest($"SELECT * FROM passports WHERE ids LIKE '%{userId}%'");
             
-            var tables = new List<DataTable> {dataTable, _database.SendReadingRequest($"SELECT * FROM users_statuses WHERE user_id = {userId}") };
-            dataTable = tables.RightMerge("user_id");
+            var tables = new List<DataTable> {dataTable, _database.SendReadingRequest($"SELECT * FROM statuses WHERE ids LIKE '%{userId}%'") };
+            dataTable = tables.RightMerge("ids");
             return dataTable;
         }
     }
