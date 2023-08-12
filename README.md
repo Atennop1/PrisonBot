@@ -5,8 +5,9 @@
 
 ## Specifics
 - Project using **OOP** and **SOLID**
-- Good abstractions
 - Using [**my database library**](https://github.com/Atennop1/Relational-Databases-Via-OOP)
+- Fun-made project
+- Awesome abstractions
 
 ## About project
 
@@ -33,7 +34,6 @@ The passport must be linked to at least one telegram account. But the bot suppor
 ![image](https://github.com/Atennop1/PrisonBot/assets/73060890/aab34e2c-f289-4136-937c-5bda2f38d246)
 
 ## Conclusion
-
 
 This project helped me gain experience in databases and showed in practice how useful [**my database library**](https://github.com/Atennop1/Relational-Databases-Via-OOP) is. Thanks to the development of this bot, I understood how to identify users by ID, learned how to work with several tables at once, how to move data to a new table, and in general I learned PostrgeSQL better. Well, my chat friends were also happy to receive such RP
 
