@@ -19,9 +19,8 @@ namespace PrisonBot.Functional
             if (!CanGetUpdate(updateInfo))
                 throw new InvalidOperationException("Can't get update");
 
-            var message = "ПРИВЕТ!\n" +
-                          "Я - БОТ, В КОТОРОМ МОЖНО ПОЧУВСТВОВАТЬ СЕБЯ КАК НА ЗОНЕ!\n" +
-                          "ТЫ МОЖЕШЬ СМОТРЕТЬ ПАСПОРТА ЗАКЛЮЧЕННЫХ!";
+            var message = "ПРИВЕТ!\nЯ - БОТ, В КОТОРОМ МОЖНО ПОЧУВСТВОВАТЬ СЕБЯ КАК НА ЗОНЕ!\n" +
+                          "ЧЕРЕЗ МЕНЯ ТЫ МОЖЕШЬ СМОТРЕТЬ ПАСПОРТА ЗАКЛЮЧЕННЫХ, ПРОСТО НАПИШИ КОМАНДУ /passport В ОТВЕТ НА СООБЩЕНИЕ ТОГО, ЧЕЙ ПАСПОРТ ТЫ ХОЧЕШЬ УВИДЕТЬ";
             
             _telegram.SendMessage(message, updateInfo.Message!.Chat.Id, replyToMessageId: updateInfo.Message.MessageId);
         }

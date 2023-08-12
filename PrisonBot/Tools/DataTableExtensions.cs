@@ -4,7 +4,7 @@ namespace PrisonBot.Tools
 {
     public static class DataTableExtensions
     {
-        public static DataTable RightMerge(this IList<DataTable> tables, string primaryKeyColumn)
+        public static DataTable SmartMerge(this IList<DataTable> tables, string primaryKeyColumn)
         {
             if (!tables.Any())
                 throw new ArgumentException("Tables must not be empty", nameof(tables));
