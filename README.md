@@ -9,6 +9,10 @@
 - Fun-made project
 - Awesome abstractions
 
+## Tools
+- [**Telegram.BotAPI**](https://github.com/Eptagone/Telegram.BotAPI)
+- [**Relational databases via OOP**](https://github.com/Atennop1/Relational-Databases-via-OOP)
+
 ## About project
 
 This is a telegram bot-game that I made for fun and RP in one conversation where I often chat
