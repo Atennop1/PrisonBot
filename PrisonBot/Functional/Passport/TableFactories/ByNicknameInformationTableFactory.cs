@@ -14,7 +14,8 @@ namespace PrisonBot.Functional
         
         public DataTable Create(IUpdateInfo updateInfo)
         {
-            var nickname = string.Join(' ', updateInfo.Message!.Text!.GetCommandArguments());
+            var screenedMessage = updateInfo.Message!.Text!.Replace("\'","\\\'");
+            var nickname = string.Join(' ', screenedMessage.GetCommandArguments());
             var dataTable = _database.SendReadingRequest($"SELECT * FROM passports WHERE UPPER(nickname) = UPPER('{nickname}')");
             
             if (dataTable.Rows.Count == 0)
